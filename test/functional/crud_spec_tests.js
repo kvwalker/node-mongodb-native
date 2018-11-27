@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const test = require('./shared').assert;
+const expect = require('chai').expect;
 
 function findScenarios(type) {
   return fs
@@ -14,6 +15,7 @@ function findScenarios(type) {
 
 const readScenarios = findScenarios('read');
 const writeScenarios = findScenarios('write');
+const dbScenarios = findScenarios('db');
 
 const testContext = {};
 describe('CRUD spec', function() {
@@ -50,7 +52,6 @@ describe('CRUD spec', function() {
 
       describe(scenarioName, function() {
         scenario.tests.forEach(scenarioTest => {
-          beforeEach(() => testContext.db.dropDatabase());
           it(scenarioTest.description, {
             metadata,
             test: function() {
@@ -86,6 +87,40 @@ describe('CRUD spec', function() {
             metadata,
             test: function() {
               return executeScenario(scenario, scenarioTest, this.configuration, testContext);
+            }
+          });
+        });
+      });
+    });
+  });
+
+  describe('db', function() {
+    dbScenarios.forEach(scenarioData => {
+      const scenarioName = scenarioData[0];
+      const scenario = scenarioData[1];
+      scenario.name = scenarioName;
+
+      const metadata = {
+        requires: {
+          topology: ['single', 'replicaset', 'sharded']
+        }
+      };
+
+      if (scenario.minServerVersion) {
+        metadata.requires.mongodb = `>=${scenario.minServerVersion}`;
+      }
+
+      describe(scenarioName, function() {
+        scenario.tests.forEach(scenarioTest => {
+          it(scenarioTest.description, {
+            metadata,
+            test: function() {
+              let db = testContext.db;
+              if (scenarioTest.operation.database_name) {
+                db = testContext.client.db(scenarioTest.operation.database_name);
+              }
+              db.dropDatabase();
+              return executeDbAggregateTest(scenarioTest, db);
             }
           });
         });
@@ -324,6 +359,22 @@ describe('CRUD spec', function() {
           .then(results => test.deepEqual(results, scenarioTest.outcome.collection.data));
       }
     });
+  }
+
+  function executeDbAggregateTest(scenarioTest, db) {
+    const options = {};
+    if (scenarioTest.operation.arguments.collation) {
+      options.collation = scenarioTest.operation.arguments.collation;
+    }
+
+    const pipeline = scenarioTest.operation.arguments.pipeline;
+    return db
+      .aggregate(pipeline, options)
+      .toArray()
+      .then(results => {
+        expect(results).to.deep.equal(scenarioTest.outcome.result);
+        return Promise.resolve();
+      });
   }
 
   function executeScenario(scenario, scenarioTest, configuration, context) {
