@@ -363,8 +363,8 @@ describe('CRUD spec', function() {
 
   function executeDbAggregateTest(scenarioTest, db) {
     const options = {};
-    if (scenarioTest.operation.arguments.collation) {
-      options.collation = scenarioTest.operation.arguments.collation;
+    if (scenarioTest.operation.arguments.allowDiskUse) {
+      options.allowDiskUse = scenarioTest.operation.arguments.allowDiskUse;
     }
 
     const pipeline = scenarioTest.operation.arguments.pipeline;
