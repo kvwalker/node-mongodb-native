@@ -232,7 +232,9 @@ describe('Transactions', function() {
           return this.skip();
         }
 
-        const topology = new core.Topology(this.configuration.url());
+        const host = 'localhost';
+        const port = 51000;
+        const topology = new core.Topology([{ host, port }], {});
         const sessionPool = new sessions.ServerSessionPool(topology);
         const session = new sessions.ClientSession(topology, sessionPool);
 
