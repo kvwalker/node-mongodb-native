@@ -232,7 +232,7 @@ describe('Transactions', function() {
           return this.skip();
         }
 
-        const topology = new core.Topology();
+        const topology = new core.Topology(this.configuration.url());
         const sessionPool = new sessions.ServerSessionPool(topology);
         const session = new sessions.ClientSession(topology, sessionPool);
 
