@@ -234,7 +234,7 @@ describe('Transactions', function() {
           return this.skip();
         }
 
-        const topology = new core.Topology();
+        const topology = new core.Topology([{ host: 'localhost', port: 51000 }]);
         const sessionPool = new sessions.ServerSessionPool(topology);
         const session = new sessions.ClientSession(topology, sessionPool);
 
