@@ -222,9 +222,8 @@ describe('Transactions', function() {
           'Transactions are not supported on sharded clusters in MongoDB < 4.2.'
         );
 
-        session.endSession(() => {
-          sessionPool.endAllPooledSessions(done);
-        });
+        session.endSession(done);
+        sessionPool.endAllPooledSessions();
       }
     });
 
@@ -243,9 +242,8 @@ describe('Transactions', function() {
           'Transactions are not supported on sharded clusters in MongoDB < 4.2.'
         );
 
-        session.endSession(() => {
-          sessionPool.endAllPooledSessions(done);
-        });
+        session.endSession(done);
+        sessionPool.endAllPooledSessions();
       }
     });
   });
