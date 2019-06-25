@@ -52,6 +52,25 @@ describe('Sessions', function() {
     }
   });
 
+  it('should error if transactions are not supported', {
+    metadata: {
+      requires: { topology: ['sharded'], mongodb: '>4.0.0' },
+      // Skipping session leak tests b/c these are explicit sessions
+      sessions: { skipLeakTests: true }
+    },
+    test: function(done) {
+      const client = test.client;
+      expect(() => {
+        client.startSession();
+      }).to.throw('');
+
+      client.close(err => {
+        expect(err).to.not.exist;
+        done();
+      });
+    }
+  });
+
   describe('withSession', {
     metadata: { requires: { mongodb: '>3.6.0' } },
     test: function() {
