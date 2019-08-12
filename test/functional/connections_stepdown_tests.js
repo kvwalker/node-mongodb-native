@@ -22,6 +22,7 @@ describe('Connections survive primary step down', function() {
     metadata: { requires: { mongodb: '>=4.2.0', topology: 'replicaset' } },
     test: function() {
       const db = client.db('step-down');
+
       let numberOfConnections;
 
       return Promise.resolve()
@@ -58,9 +59,10 @@ describe('Connections survive primary step down', function() {
                         db
                           .admin()
                           .serverStatus()
-                          .then(result =>
-                            expect(result.connections.totalCreated).to.equal(numberOfConnections)
-                          )
+                          .then(result => {
+                            expect(result.connections.totalCreated).to.equal(numberOfConnections);
+                            cursor.close();
+                          })
                       )
                   );
               })
