@@ -3,7 +3,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-describe.skip('Connections survive primary step down', function() {
+describe('Connections survive primary step down', function() {
   let client;
 
   beforeEach(function() {
@@ -22,6 +22,7 @@ describe.skip('Connections survive primary step down', function() {
     metadata: { requires: { mongodb: '>=4.2.0', topology: 'replicaset' } },
     test: function() {
       const db = client.db('step-down');
+
       let numberOfConnections;
 
       return Promise.resolve()
@@ -58,9 +59,10 @@ describe.skip('Connections survive primary step down', function() {
                         db
                           .admin()
                           .serverStatus()
-                          .then(result =>
-                            expect(result.connections.totalCreated).to.equal(numberOfConnections)
-                          )
+                          .then(result => {
+                            expect(result.connections.totalCreated).to.equal(numberOfConnections);
+                            cursor.close();
+                          })
                       )
                   );
               })
