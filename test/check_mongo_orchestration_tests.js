@@ -12,7 +12,8 @@ shell.exec('nohup mongo-orchestration start > ./out.log 2> ./err.log < /dev/null
 shell.echo('finished starting mongo-orchestration');
 shell.cd('mongo_orchestration');
 
+shell.exec('mkdir -p /home/travis/tmp/orchestrations');
 shell.exec('../scripts/mo configurations/servers/clean.json start');
 shell.echo('trying to run mongo --port 27017:');
-shell.exec('mongo --port 27017');
+//shell.exec('mongo --port 27017');
 shell.echo('finished check mongo orchestration script');
