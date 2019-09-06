@@ -17,7 +17,7 @@ before_install:
   - mongocryptd/bin/mongocryptd&
   - wget https://s3.amazonaws.com/mciuploads/libmongocrypt/ubuntu1604/master/1c6c72377582ebcd8402f6f15fff5c3143b46741/libmongocrypt.tar.gz
   - sudo tar -xzf libmongocrypt.tar.gz -C /usr/local
-  - test/tools/travis-setup.sh
+  - bash test/tools/travis-setup.sh
 
 jobs:
   include:
